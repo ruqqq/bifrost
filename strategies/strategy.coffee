@@ -17,6 +17,11 @@ class Strategy
 			console.error "Cannot find app #{@app} for #{@server.name} (#{@server.host})."
 			process.exit 1
 
+		if @argv[1] is "--help"
+			console.info "#{@payload_name} usage: ".bold.yellow + "#{@payload_name} #{Strategy.help()}".cyan
+			console.info ""
+			process.exit 1
+
 		@connection = new Connection()
 
 		@connection.on "ready", =>

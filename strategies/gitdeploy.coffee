@@ -12,6 +12,12 @@ class Strategy extends require("./strategy.coffee")
 			console.error "Cannot parse #{@payload[@app].repo} to get gitfolder."
 			process.exit 1
 
+		if @argv[1]
+			@payload[@app].branch = @argv[1]
+
+	@help: () =>
+		return "<app_name> [branch]"
+
 	execute: =>
 		@_check_if_deployed_previously (std, first_deployment) =>
 			if !std.code

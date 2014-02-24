@@ -27,6 +27,7 @@ class App
 
 		if process.argv[3] is "--help" or !process.argv[3]
 			@bifrost_info()
+			@strategy_usage()
 			@list_servers()
 			process.exit 1
 
@@ -40,6 +41,7 @@ class App
 
 		if process.argv[4] is "--help" or !process.argv[4]
 			@bifrost_info()
+			@strategy_usage()
 			@list_server_apps()
 			process.exit 1
 
@@ -52,6 +54,11 @@ class App
 		console.info "(c)2014 Faruq Rasid <me@ruqqq.sg>\n".italic.white
 		console.info "Usage: bifrost <strategy> <server> [extra arguments]".green
 
+		console.info ""
+
+	strategy_usage: =>
+		console.info "#{process.argv[2]} usage: ".bold.yellow
+		console.info "   - #{process.argv[2]} #{@strategies[process.argv[2]].help()}".cyan
 		console.info ""
 
 	list_servers: =>
