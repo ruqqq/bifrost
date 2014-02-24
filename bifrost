@@ -1,2 +1,2 @@
 #!/bin/bash
-coffee app.coffee $@
+coffee "`dirname $0`/app.coffee" $@

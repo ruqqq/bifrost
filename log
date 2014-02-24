@@ -1,2 +1,2 @@
 #!/bin/bash
-./bifrost viewlog $@ | node_modules/bunyan/bin/bunyan
+"`dirname $0`/bifrost" viewlog $@ | node_modules/bunyan/bin/bunyan
