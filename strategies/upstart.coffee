@@ -15,7 +15,7 @@ class Strategy extends require("./strategy.coffee")
 		if @argv[1] is "stop" 
 			@_sudo_stop (std, output) =>
 				if !std.code
-					console.log "#{@app} stopped on #{@server.name} (#{@server.host}).".green
+					console.log "#{@app_name} stopped on #{@server.name} (#{@server.host}).".green
 				else
 					console.warn std.stderr.red
 				@connection.end()
@@ -27,7 +27,7 @@ class Strategy extends require("./strategy.coffee")
 		else if @argv[1] is "start" 
 			@_sudo_start (std, output) =>
 				if !std.code
-					console.log "#{@app} started on #{@server.name} (#{@server.host}).".green
+					console.log "#{@app_name} started on #{@server.name} (#{@server.host}).".green
 				else
 					console.warn std.stderr.red
 				@connection.end()
@@ -41,7 +41,7 @@ class Strategy extends require("./strategy.coffee")
 				if !std.code
 					@_sudo_start (std, output) =>
 						if !std.code
-							console.log "#{@app} restarted on #{@server.name} (#{@server.host}).".green
+							console.log "#{@app_name} restarted on #{@server.name} (#{@server.host}).".green
 						else
 							console.warn std.stderr.red
 						@connection.end()
@@ -61,7 +61,7 @@ class Strategy extends require("./strategy.coffee")
 		else
 			@_sudo_status (std, output) =>
 				if !std.code
-					console.log "#{@app} started on #{@server.name} (#{@server.host}).".green
+					console.log "#{@app_name} started on #{@server.name} (#{@server.host}).".green
 				else
 					console.warn std.stderr.red
 				@connection.end()
@@ -73,7 +73,7 @@ class Strategy extends require("./strategy.coffee")
 
 	# callback(std, output)
 	_sudo_stop: (callback, opt_callback) =>
-		cmd = "sudo stop #{@payload[@app].service_name}"
+		cmd = "sudo stop #{@app.service_name}"
 		console.log ">> #{cmd}".cyan
 
 		@connection.exec cmd, (err, stream) =>
@@ -88,7 +88,7 @@ class Strategy extends require("./strategy.coffee")
 
 	# callback(std, output)
 	_sudo_start: (callback, opt_callback) =>
-		cmd = "sudo start #{@payload[@app].service_name}"
+		cmd = "sudo start #{@app.service_name}"
 		console.log ">> #{cmd}".cyan
 
 		@connection.exec cmd, (err, stream) =>
@@ -103,7 +103,7 @@ class Strategy extends require("./strategy.coffee")
 
 	# callback(std, output)
 	_sudo_restart: (callback, opt_callback) =>
-		cmd = "sudo restart #{@payload[@app].service_name}"
+		cmd = "sudo restart #{@app.service_name}"
 		console.log ">> #{cmd}".cyan
 
 		@connection.exec cmd, (err, stream) =>
@@ -118,7 +118,7 @@ class Strategy extends require("./strategy.coffee")
 
 	# callback(std, output)
 	_sudo_status: (callback, opt_callback) =>
-		cmd = "sudo status #{@payload[@app].service_name}"
+		cmd = "sudo status #{@app.service_name}"
 		console.log ">> #{cmd}".cyan
 
 		@connection.exec cmd, (err, stream) =>

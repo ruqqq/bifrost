@@ -7,9 +7,9 @@ class Strategy extends require("./strategy.coffee")
 	execute: =>
 		@_npm_cache_clear (std, output) =>
 			if !std.code
-				@_npm_install @payload[@app].path, (std, output) =>
+				@_npm_install @app.path, (std, output) =>
 					if !std.code
-						console.log "npm install for #{@app} succeeded on #{@server.name} (#{@server.host}).".green
+						console.log "npm install for #{@app_name} succeeded on #{@server.name} (#{@server.host}).".green
 					else
 						console.warn std.stderr.red
 					@connection.end()

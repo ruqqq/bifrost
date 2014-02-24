@@ -11,11 +11,17 @@ class Strategy
 			console.error "Cannot find payload #{@payload_name} for #{@server.name} (#{@server.host})".red
 			process.exit 1
 
-		@app = @argv[0]
+		@app_name = @argv[0]
+		@app = @payload[@app_name]
 
-		if !@payload[@app]
-			console.error "Cannot find app #{@app} for #{@server.name} (#{@server.host})."
-			process.exit 1
+		if !@app
+			if @payload[Object.keys(@payload)[0]] instanceof Object
+				console.error "Cannot find app #{@app_name} for #{@server.name} (#{@server.host})."
+				process.exit 1
+			else
+				@app_name = @server.app_name or @server.name
+				@app = @payload
+				@argv.splice 0, 0, ""
 
 		if @argv[1] is "--help"
 			console.info "#{@payload_name} usage: ".bold.yellow + "#{@payload_name} #{Strategy.help()}".cyan

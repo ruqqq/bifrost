@@ -39,7 +39,7 @@ class App
 
 		@server = require(@server)
 
-		if process.argv[4] is "--help" or !process.argv[4]
+		if process.argv[4] is "--help"
 			@bifrost_info()
 			@strategy_usage()
 			@list_server_apps()
@@ -73,8 +73,9 @@ class App
 	list_server_apps: =>
 		console.info "Apps for #{@server.name} (#{@server.host}): ".bold.yellow
 
-		for app in Object.keys(@server.payloads[process.argv[2]])
-			console.info "   - #{app}".cyan
+		if @server.payloads[process.argv[2]][Object.keys(@server.payloads[process.argv[2]])[0]] instanceof Object
+			for app in Object.keys(@server.payloads[process.argv[2]])
+				console.info "   - #{app}".cyan
 
 		console.info ""
 

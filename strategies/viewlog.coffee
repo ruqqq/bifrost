@@ -4,8 +4,8 @@ class Strategy extends require("./strategy.coffee")
 	constructor: (@server, @argv) ->
 		super @server, @argv
 
-		if !@payload[@app].file
-			console.error "No log file specified for #{@app} for #{@server.name} (#{@server.host})."
+		if !@app.file
+			console.error "No log file specified for #{@app_name} for #{@server.name} (#{@server.host})."
 			process.exit 1
 
 	execute: =>
@@ -18,7 +18,7 @@ class Strategy extends require("./strategy.coffee")
 				process.stderr.write stderr.toString().red 
 
 	_viewlog: (callback, opt_callback) =>
-		cmd = "tail -n 100 -f #{@payload[@app].file}"
+		cmd = "tail -n 100 -f #{@app.file}"
 		console.log ">> #{cmd}".cyan
 
 		@connection.exec cmd, (err, stream) =>

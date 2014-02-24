@@ -4,16 +4,16 @@ class Strategy extends require("./strategy.coffee")
 	constructor: (@server, @argv) ->
 		super @server, @argv
 
-		@gitfolder = @payload[@app].repo.split "/"
+		@gitfolder = @app.repo.split "/"
 		@gitfolder = @gitfolder[if @gitfolder.length > 0 then @gitfolder.length-1 else 0]
 		@gitfolder = @gitfolder.replace ".git", ""
 
 		if !@gitfolder
-			console.error "Cannot parse #{@payload[@app].repo} to get gitfolder."
+			console.error "Cannot parse #{@app.repo} to get gitfolder."
 			process.exit 1
 
 		if @argv[1]
-			@payload[@app].branch = @argv[1]
+			@app.branch = @argv[1]
 
 	@help: () =>
 		return "<app_name> [branch]"
@@ -27,9 +27,9 @@ class Strategy extends require("./strategy.coffee")
 							console.log "git cloned successfully.".green
 							@_git_checkout (std, output) =>
 								if !std.code
-									@_npm_install "#{@payload[@app].path}/#{@gitfolder}", (std, output) =>
+									@_npm_install "#{@app.path}/#{@gitfolder}", (std, output) =>
 										if !std.code
-											console.log "#{@app} installed on #{@server.name} (#{@server.host}).".green
+											console.log "#{@app_name} installed on #{@server.name} (#{@server.host}).".green
 											console.log "Please configure config.coffee before starting app.".green
 										else
 											console.warn std.stderr.red
@@ -40,7 +40,7 @@ class Strategy extends require("./strategy.coffee")
 										#else if stderr
 											#process.stderr.write stderr.toString().red
 								else
-									console.warn "Failed to checkout branch #{@payload[@app].branch}.".red
+									console.warn "Failed to checkout branch #{@app.branch}.".red
 									@connection.end()
 							, (stderr, stdout) =>
 								if stdout
@@ -48,7 +48,7 @@ class Strategy extends require("./strategy.coffee")
 								#else if stderr
 									#process.stderr.write stderr.toString().red
 						else
-							console.warn "Failed to clone git: #{@payload[@app].repo}.".red
+							console.warn "Failed to clone git: #{@app.repo}.".red
 							@connection.end()
 					, (stderr, stdout) =>
 						if stdout
@@ -60,9 +60,9 @@ class Strategy extends require("./strategy.coffee")
 						if !std.code
 							@_git_checkout (std, output) =>
 								if !std.code
-									console.log "#{@app} updated on #{@server.name} (#{@server.host}).".green
+									console.log "#{@app_name} updated on #{@server.name} (#{@server.host}).".green
 								else
-									console.warn "Failed to checkout branch #{@payload[@app].branch}.".red
+									console.warn "Failed to checkout branch #{@app.branch}.".red
 								@connection.end()
 							, (stderr, stdout) =>
 								if stdout
@@ -70,7 +70,7 @@ class Strategy extends require("./strategy.coffee")
 								#else if stderr
 								#	process.stderr.write stderr.toString().red
 						else
-							console.warn "Failed to git pull: #{@payload[@app].repo}.".red
+							console.warn "Failed to git pull: #{@app.repo}.".red
 							@connection.end()
 					, (stderr, stdout) =>
 						if stdout
@@ -82,7 +82,7 @@ class Strategy extends require("./strategy.coffee")
 
 	# callback(std, first_deployment)
 	_check_if_deployed_previously: (callback, opt_callback) =>
-		cmd = "cd #{@payload[@app].path} && ls -al"
+		cmd = "cd #{@app.path} && ls -al"
 		console.log ">> #{cmd}".cyan
 
 		@connection.exec cmd, (err, stream) =>
@@ -101,7 +101,7 @@ class Strategy extends require("./strategy.coffee")
 
 	# callback(std, output)
 	_git_clone: (callback, opt_callback) =>
-		cmd = "cd #{@payload[@app].path} && git clone #{@payload[@app].repo}"
+		cmd = "cd #{@app.path} && git clone #{@app.repo}"
 		console.log ">> #{cmd}".cyan
 
 		@connection.exec cmd, (err, stream) =>
@@ -116,7 +116,7 @@ class Strategy extends require("./strategy.coffee")
 
 	# callback(std, output)
 	_git_pull: (callback, opt_callback) =>
-		cmd = "cd #{@payload[@app].path}/#{@gitfolder} && git pull"
+		cmd = "cd #{@app.path}/#{@gitfolder} && git pull"
 		console.log ">> #{cmd}".cyan
 
 		@connection.exec cmd, (err, stream) =>
@@ -131,7 +131,7 @@ class Strategy extends require("./strategy.coffee")
 
 	# callback(std, output)
 	_git_checkout: (callback, opt_callback) =>
-		cmd = "cd #{@payload[@app].path}/#{@gitfolder} && git checkout #{@payload[@app].branch}"
+		cmd = "cd #{@app.path}/#{@gitfolder} && git checkout #{@app.branch}"
 		console.log ">> #{cmd}".cyan
 
 		@connection.exec cmd, (err, stream) =>
