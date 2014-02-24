@@ -51,10 +51,11 @@ class Strategy
 		else
 			auth.password = @server.password
 
+		console.log "connecting to #{@server.name} (#{@server.host})...".cyan
 		@connection.connect auth
 
 	onSSHConnected: =>
-		console.log "connected to #{@server.name} (#{@server.host})".cyan
+		console.log "...connected!".cyan
 
 	onSSHError: (err) =>
 		console.trace err
@@ -63,7 +64,7 @@ class Strategy
 		#console.log "connection ended."
 
 	onSSHClosed: =>
-		console.log "connection to #{@server.name} (#{@server.host}) closed.".cyan
+		console.log "Closed connection to #{@server.name} (#{@server.host}).".cyan
 
 	execute: =>
 		@connection.exec "uptime", (err, stream) =>
