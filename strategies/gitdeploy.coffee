@@ -16,7 +16,7 @@ class Strategy extends require("./strategy.coffee")
 			@app.branch = @argv[1]
 
 	@help: () =>
-		return "<app_name> [branch]"
+		return "<server> [app_name] [branch]"
 
 	execute: =>
 		@_check_if_deployed_previously (std, first_deployment) =>

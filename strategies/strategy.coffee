@@ -44,7 +44,7 @@ class Strategy
 			@onSSHClosed()
 
 	@help: () =>
-		return "<app_name>"
+		return "<server> [app_name]"
 
 	connect: =>
 		auth =

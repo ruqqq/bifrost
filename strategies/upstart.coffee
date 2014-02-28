@@ -9,7 +9,7 @@ class Strategy extends require("./strategy.coffee")
 			process.exit 1
 
 	@help: () =>
-		return "<app_name> <stop/start/restart/status>"
+		return "<server> [app_name] <stop/start/restart/status>"
 
 	execute: =>
 		if @argv[1] is "stop" 
