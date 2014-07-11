@@ -116,7 +116,10 @@ class Strategy extends require("./strategy.coffee")
 
 	# callback(std, output)
 	_git_pull: (callback, opt_callback) =>
-		cmd = "cd #{@app.path}/#{@gitfolder} && git pull"
+		if @argv[1] is "-f"
+			cmd = "cd #{@app.path}/#{@gitfolder} && git reset --hard && git pull"
+		else
+			cmd = "cd #{@app.path}/#{@gitfolder} && git pull"
 		console.log ">> #{cmd}".cyan
 
 		@connection.exec cmd, (err, stream) =>
