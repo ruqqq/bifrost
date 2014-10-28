@@ -92,7 +92,7 @@ For hipache-based deployments, you should setup your Docker hosts in a private n
 
 ### Sample App
 
-**TODO: Finish Sample App **
+**TODO: Finish Sample App**
 
 ## Available Commands
 
