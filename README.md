@@ -90,11 +90,11 @@ For hipache-based deployments, you should setup your Docker hosts in a private n
 
 [Docker Ambassador Pattern]: https://docs.docker.com/articles/ambassador_pattern_linking/
 
-## Sample App
+### Sample App
 
 **TODO: Finish Sample App **
 
-### Available Commands
+## Available Commands
 
 The commands are to be run in your app folder which contains `bifrost.yml`. You can also run `b --help` in the command line for help.
 
