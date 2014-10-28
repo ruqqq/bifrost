@@ -1,3 +1,4 @@
 node_modules/*
 server.yml
 bifrost.yml
+npm-debug.log

@@ -30,7 +30,7 @@ Local Machine:
 Install bifrost:
 
 ```
-$ npm install -g bifrost
+$ npm install -g bifrost-deploy
 ```
 
 bifrost comes with a helper script `b`. If the bifrost folder is in your `$PATH`, you can invoke bifrost with just `b <args>`.
