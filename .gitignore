@@ -1,2 +1,3 @@
-servers/*
 node_modules/*
+server.yml
+bifrost.yml

@@ -1,0 +1,104 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', '-g', './' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.32
+4 verbose cache add [ './', null ]
+5 verbose cache add name=undefined spec="./" args=["./",null]
+6 verbose parsed url { protocol: null,
+6 verbose parsed url   slashes: null,
+6 verbose parsed url   auth: null,
+6 verbose parsed url   host: null,
+6 verbose parsed url   port: null,
+6 verbose parsed url   hostname: null,
+6 verbose parsed url   hash: null,
+6 verbose parsed url   search: null,
+6 verbose parsed url   query: null,
+6 verbose parsed url   pathname: './',
+6 verbose parsed url   path: './',
+6 verbose parsed url   href: './' }
+7 silly lockFile 0ee6c175- ./
+8 verbose lock ./ /Users/ruqqq/.npm/0ee6c175-.lock
+9 verbose tar pack [ '/Users/ruqqq/.npm/bifrost/0.2.0/package.tgz', './' ]
+10 verbose tarball /Users/ruqqq/.npm/bifrost/0.2.0/package.tgz
+11 verbose folder ./
+12 info prepublish bifrost@0.2.0
+13 silly lockFile 04cb2bca-tar tar://./
+14 verbose lock tar://./ /Users/ruqqq/.npm/04cb2bca-tar.lock
+15 silly lockFile 1bbdba83-qq-npm-bifrost-0-2-0-package-tgz tar:///Users/ruqqq/.npm/bifrost/0.2.0/package.tgz
+16 verbose lock tar:///Users/ruqqq/.npm/bifrost/0.2.0/package.tgz /Users/ruqqq/.npm/1bbdba83-qq-npm-bifrost-0-2-0-package-tgz.lock
+17 silly lockFile 04cb2bca-tar tar://./
+18 silly lockFile 04cb2bca-tar tar://./
+19 silly lockFile 1bbdba83-qq-npm-bifrost-0-2-0-package-tgz tar:///Users/ruqqq/.npm/bifrost/0.2.0/package.tgz
+20 silly lockFile 1bbdba83-qq-npm-bifrost-0-2-0-package-tgz tar:///Users/ruqqq/.npm/bifrost/0.2.0/package.tgz
+21 silly lockFile 60863ca4--ruqqq-npm-bifrost-0-2-0-package /Users/ruqqq/.npm/bifrost/0.2.0/package
+22 verbose lock /Users/ruqqq/.npm/bifrost/0.2.0/package /Users/ruqqq/.npm/60863ca4--ruqqq-npm-bifrost-0-2-0-package.lock
+23 silly lockFile 60863ca4--ruqqq-npm-bifrost-0-2-0-package /Users/ruqqq/.npm/bifrost/0.2.0/package
+24 silly lockFile 60863ca4--ruqqq-npm-bifrost-0-2-0-package /Users/ruqqq/.npm/bifrost/0.2.0/package
+25 silly lockFile 0ee6c175- ./
+26 silly lockFile 0ee6c175- ./
+27 silly resolved [ { name: 'bifrost',
+27 silly resolved     version: '0.2.0',
+27 silly resolved     description: 'bifrost is a deployment tool to be used in a simple Docker setup.',
+27 silly resolved     main: 'app.coffee',
+27 silly resolved     bin: { b: './b' },
+27 silly resolved     preferGlobal: true,
+27 silly resolved     dependencies:
+27 silly resolved      { colors: '^0.6.2',
+27 silly resolved        fstream: '^1.0.1',
+27 silly resolved        bunyan: '^0.22.1',
+27 silly resolved        rsyncwrapper: '^0.4.1',
+27 silly resolved        q: '^1.0.1',
+27 silly resolved        ssh2: '^0.3.4',
+27 silly resolved        yamljs: '^0.1.5' },
+27 silly resolved     devDependencies: { 'coffee-script': '^1.7.1' },
+27 silly resolved     scripts: { test: 'echo "Error: no test specified" && exit 1' },
+27 silly resolved     repository: { type: 'git', url: 'https://github.com/ruqqq/bifrost.git' },
+27 silly resolved     keywords: [ 'docker', 'deployment', 'devops', 'automator', 'script' ],
+27 silly resolved     author: { name: 'Faruq Rasid', email: 'me@ruqqq.sg' },
+27 silly resolved     license: 'GPL',
+27 silly resolved     bugs: { url: 'https://github.com/ruqqq/bifrost/issues' },
+27 silly resolved     homepage: 'https://github.com/ruqqq/bifrost',
+27 silly resolved     readme: '# bifrost\n\nbifrost is a deployment tool to be used in a *simple** Docker setup. bifrost deploy containers based on parameters specified in `bifrost.yml` and `Dockerfile`.\n\n*(Using bifrost for large scale deployments is largely untested)*\n\nA *simplified* idea of how bifrost works by describing what happens during the command `b build`.\n\n1. Copy folder which includes the `Dockerfile` to the docker host.\n2. SSH into docker host and run `docker build`\n3. `docker run` with the image which was just created\n4. The container is up now if there were no errors during deployment\n\nbifrost was built because I needed a way to deploy my Docker apps easily. Minimal setup and boilerplate. Please read through the README before attempting to use.\n\n## Installation\n\nbifrost is basically a bunch of "scripts" which SSH into your Docker host and perform the requested commands. Minimally, you only need a local machine (the deployer) with the dependencies installed, and the target machine with Docker and SSH installed.\n\nTarget Machine:\n- Install Docker (tested with 1.3)\n- A private IP on `eth0` (possible without but untested)\n\nLocal Machine:\n- Install rsync (already installed on OSX and Ubuntu)\n- Node.js, npm and CoffeeScript\n- Install bifrost\n- Generate SSH key and install on target machine\'s root user\n\nInstall bifrost:\n\n```\n$ npm install -g bifrost\n```\n\nbifrost comes with a helper script `b`. If the bifrost folder is in your `$PATH`, you can invoke bifrost with just `b <args>`.\n\n### hipache Integration\n\nbifrost comes with integration with hipache as a dynamic router for web apps deployed in Docker containers. Setting it up is easy:\n\n- Upload your SSL key and cert (`ssl.key` and `ssl.crt`) into `/root/ssl/ssl.key` and `/root/ssl/ssl.crt` on your Docker host respectively\n- On your Docker host:\n\n```\n$ docker run --restart="always" -d --name router -p 80:80 -p 443:443 -v /root/ssl:/etc/ssl ruqqq/hipache\n```\n\nThis will expose the Docker host port 80 and 443 to the hipache instance known as `router`. Now you can point domains A record to the Docker host public IP and the requests will be routed by hipache.\n\nIn your app `bifrost.yml`, configure the `hipache` section accordingly. After that, any deployments will automatically configure hipache to point to the deployed app as a backend.\n\nYou can deploy as many containers as you want and hipache will load balance between the backends.\n\n**Important: Using this integration means you should start/stop/restart/build your containers with bifrost exclusively as the integration mechanism exists in those commands too.**\n\n*Note: To use hipache without SSL, you\'ll need to supply your own config.json. Refer to https://github.com/ruqqq/dockerfile-hipache*\n\n## Usage\n\n### Single Host Deployment\n\n1. Create `Dockerfile`\n2. Define the application deployment details in `bifrost.yml`\n3. Set the folder where you store server configs and SSH keys: `$ export BIFROST_SERVERS=~/.bifrost_servers`\n4. Run `$ b build --host=yourserver.com` in the folder with the two files above\n\n**TODO: Finish section**\n\n### Multi Host Deployment\n\n**TODO: Finish section**\n\nReadings:\n- [Docker Ambassador Pattern]\n\n[Docker Ambassador Pattern]: https://docs.docker.com/articles/ambassador_pattern_linking/\n\n### Available Commands\n\nYou can run `b --help` in the command line for help. The commands are provided here for reference only.\n\nCommand | Description\n---:| ---\n`build [--scale num]` | build and deploy image; use `--scale` to specify how many instances to run\n`clean` | stops all containers, remove them and remove all images; kind of like "reformatting" the host\n`inspect <container id>` | inspect the specific container id\n`logs <container id> [--file file]` | view log for the specific container id; use `--file` to view log file inside the container\n`restart [--c containerid]` | restart the app on the host; use `--c` to target specific container\n`rm [--c containerid]` | remove the app on the host; use `--c` to target specific container\n`sftp` | view sftp folder for the containers\n`start [--c containerid]` | start the app on the host; use `--c` to target specific container\n`status [--c containerid]` | view status of the app on the host; use `--c` to target specific container\n`stop [--c containerid]` | stop the app on the host; use `--c` to target specific container\n`trim` | deletes unused images on the host\n`update-config` | upload <appFolder>/config to the host\n`update-router` | update hipache routing for the app\n\n## Author\n\n- Faruq Rasid <me@ruqqq.sg>',
+27 silly resolved     readmeFilename: 'README.md',
+27 silly resolved     gitHead: '0574b00a8457418af8bf1feaca26a1c0519588a2',
+27 silly resolved     _id: 'bifrost@0.2.0',
+27 silly resolved     _shasum: 'c7831870f26879ed1bf73ee1632f2de02598154a',
+27 silly resolved     _from: './' } ]
+28 info install bifrost@0.2.0 into /usr/local/lib
+29 info installOne bifrost@0.2.0
+30 verbose lib/node_modules/bifrost unbuild
+31 verbose tar unpack /Users/ruqqq/.npm/bifrost/0.2.0/package.tgz
+32 silly lockFile b9b5e650-r-local-lib-node-modules-bifrost tar:///usr/local/lib/node_modules/bifrost
+33 verbose lock tar:///usr/local/lib/node_modules/bifrost /Users/ruqqq/.npm/b9b5e650-r-local-lib-node-modules-bifrost.lock
+34 silly lockFile 1bbdba83-qq-npm-bifrost-0-2-0-package-tgz tar:///Users/ruqqq/.npm/bifrost/0.2.0/package.tgz
+35 verbose lock tar:///Users/ruqqq/.npm/bifrost/0.2.0/package.tgz /Users/ruqqq/.npm/1bbdba83-qq-npm-bifrost-0-2-0-package-tgz.lock
+36 silly gunzTarPerm modes [ '755', '644' ]
+37 error Error: EACCES, mkdir '/usr/local/lib/node_modules/bifrost'
+37 error  { [Error: EACCES, mkdir '/usr/local/lib/node_modules/bifrost']
+37 error   errno: 3,
+37 error   code: 'EACCES',
+37 error   path: '/usr/local/lib/node_modules/bifrost',
+37 error   fstream_type: 'Directory',
+37 error   fstream_path: '/usr/local/lib/node_modules/bifrost',
+37 error   fstream_class: 'DirWriter',
+37 error   fstream_stack:
+37 error    [ '/usr/local/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23',
+37 error      '/usr/local/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53',
+37 error      'Object.oncomplete (fs.js:107:15)' ] }
+38 error Please try running this command again as root/Administrator.
+39 error System Darwin 14.0.0
+40 error command "node" "/usr/local/bin/npm" "install" "-g" "./"
+41 error cwd /Users/ruqqq/Documents/Projects/bifrost
+42 error node -v v0.10.32
+43 error npm -v 1.4.28
+44 error path /usr/local/lib/node_modules/bifrost
+45 error fstream_path /usr/local/lib/node_modules/bifrost
+46 error fstream_type Directory
+47 error fstream_class DirWriter
+48 error code EACCES
+49 error errno 3
+50 error stack Error: EACCES, mkdir '/usr/local/lib/node_modules/bifrost'
+51 error fstream_stack /usr/local/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23
+51 error fstream_stack /usr/local/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53
+51 error fstream_stack Object.oncomplete (fs.js:107:15)
+52 verbose exit [ 3, true ]

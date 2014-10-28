@@ -1,81 +1,103 @@
 require "colors"
 fs = require "fs"
-
-# change working directory
-process.chdir __dirname
+YAML = require "yamljs"
 
 class App
 	strategies: {}
 
 	constructor: ->
+		process.argv = process.argv.slice 2, process.argv.length
+
 		# load strategies
-		_strategies = fs.readdirSync "strategies"
+		_strategies = fs.readdirSync "#{__dirname}/strategies"
 		for file in _strategies
 			if file.indexOf(".coffee") > -1 and file.indexOf("strategy.coffee") < 0
-				@strategies[file.split(".")[0]] = require "./strategies/#{file}"
+				@strategies[file.split(".")[0]] = require "#{__dirname}/strategies/#{file}"
 
-		if !process.argv[2] or process.argv[2] is "--help"
-			if process.argv[2] isnt "--help"
+		if !process.argv[0] or process.argv[0] is "--help"
+			if process.argv[0] isnt "--help"
 				console.warn "Invalid command. Showing help:\n".red
 
 			@help()
 			process.exit 1
 
-		if !@strategies[process.argv[2]]
-			console.error "Strategy #{process.argv[2]} not found.".red
+		if !@strategies[process.argv[0]]
+			console.error "Strategy #{process.argv[0]} not found.".red
 			process.exit 1
 
-		if process.argv[3] is "--help" or !process.argv[3]
+		@strategyName = process.argv[0]
+
+		# if user just want to see help, output it and exit
+		if process.argv[1] is "--help"
 			@bifrost_info()
 			@strategy_usage()
 			@list_servers()
 			process.exit 1
 
-		@server = "./servers/#{process.argv[3]}.coffee"
+		process.argv = process.argv.slice 1, process.argv.length
 
-		if !fs.existsSync(@server)
-			console.error "Server #{process.argv[3]} not found.".red
+		# load the server file based on env or argv
+		serverPath = if process.env.BIFROST_SERVERS then process.env.BIFROST_SERVERS else "servers"
+		if serverPath is ""
+			console.error "Env variable BIFROST_SERVERS is empty.".red
 			process.exit 1
 
-		@server = require(@server)
+		serverName = process.env.BIFROST_HOST
+		for ind,val of process.argv
+			if val is "--host"
+				serverName = process.argv[parseInt(ind)+1]
+				process.argv.splice ind, 2
+				break
+		@server = "#{serverPath}/#{serverName}.yml"
 
-		if process.argv[4] is "--help"
+		if !serverName or serverName is ""
+			console.error "Specify --host option or BIFROST_HOST env.".red
+			process.exit 1
+
+		if !fs.existsSync(@server)
+			console.error "Host #{serverName} not found.".red
+			process.exit 1
+
+		try
+			@server = YAML.load @server
+		catch e
+			console.error "Please specify a valid server yml."
+			process.exit 1
+
+		# resolve the path of key_file if needed
+		if @server.key_file
+			@server.key_file = "#{serverPath}/#{@server.key_file}"
+
+		# output help if user is requesting it and exit
+		if process.argv[0] is "--help"
 			@bifrost_info()
 			@strategy_usage()
-			@list_server_apps()
 			process.exit 1
 
 	start: =>
-		@strategy = new @strategies[process.argv[2]] @server, process.argv.slice 4, process.argv.length
+		@strategy = new @strategies[@strategyName] @, @server, process.argv
 		@strategy.connect()
 
 	bifrost_info: =>
-		console.info "bifrost v0.1".bold.blue
+		console.info "bifrost v0.2: The Docker \"Catapult\"".bold.blue
 		console.info "(c)2014 Faruq Rasid <me@ruqqq.sg>\n".italic.white
-		console.info "Usage: bifrost <strategy> <server> [extra arguments]".green
-
+		console.info "Run the command in the directory which contains bifrost.yml:".italic.white
+		console.info "bifrost <strategy> [--host BIFROST_HOST] [args...]".green
+		
 		console.info ""
 
 	strategy_usage: =>
-		console.info "#{process.argv[2]} usage: ".bold.yellow
-		console.info "   - #{process.argv[2]} #{@strategies[process.argv[2]].help()}".cyan
+		console.info "#{@strategyName} usage: ".bold.yellow
+		console.info "   - #{@strategyName} #{@strategies[@strategyName].help()}".cyan
 		console.info ""
 
 	list_servers: =>
-		console.info "Available Servers: ".bold.yellow
-		_servers = fs.readdirSync "servers"
+		console.info "Available Hosts: ".bold.yellow
+		serverPath = if process.env.BIFROST_SERVERS then process.env.BIFROST_SERVERS else "servers"
+		_servers = fs.readdirSync serverPath
 		for file in _servers
-			if file.indexOf(".coffee") > -1
+			if file.indexOf(".yml") > -1
 				console.info "   - #{file.split(".")[0]}".cyan
-
-		console.info ""
-
-	list_server_apps: =>
-		console.info "Apps for #{@server.name} (#{@server.host}): ".bold.yellow
-
-		if @server.payloads[process.argv[2]][Object.keys(@server.payloads[process.argv[2]])[0]] instanceof Object
-			for app in Object.keys(@server.payloads[process.argv[2]])
-				console.info "   - #{app}".cyan
 
 		console.info ""
 

@@ -1,0 +1,12 @@
+# server name
+name: "My Server"
+# server hostname
+host: "test.test.com"
+# server ssh port
+port: 22
+# server username (bifrost needs root access)
+username: "root"
+# server password (discouraged and untested)
+#password: null
+# server ssh key relative to this file
+key_file: "id_rsa"

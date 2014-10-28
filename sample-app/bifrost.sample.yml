@@ -1,0 +1,58 @@
+# app name (this will be used as image name hence has to be unique for different apps)
+name: "app-server"
+
+# the app folder relative to this file, usually same folder hence set as empty
+appFolder: ""
+
+# if you want to keep the config file on the docker host instead and mount into container, set the mount point here
+# <appFolder>/config folder will be mounted to this path
+# configFolder: "/opt/config"
+
+# cpu to limit the container to (relative weight); `docker run -c`
+#cpu: 0
+
+# memory to limit the container to; `docker run -m`
+#memory: 256
+
+# command to override Dockerfile
+#cmd: /bin/bash
+
+# entrypoint to override Dockerfile
+#entrypoint: /bin/bash
+
+# environment variables to pass to `docker run`
+environment:
+  GOJI_BIND: :80
+
+# ports to expose to docker host
+# special variables:
+#   - {PRIVATE_IFACE}: Host's Private IP Address (192.168.x.x)
+#   - {DOCKER_IFACE}: Docker Interface IP Address
+ports:
+
+   - "{DOCKER_IFACE}::80"
+
+# --link directive in `docker run`
+# container to link to must exist on the same docker host
+# for multi host deployment
+#links:
+#   - {container: "redis", alias: "redis"}
+
+# volumes to mount from docker host to container; `docker run -v` directive
+#volumes:
+#  - {host: "/root/{id}", container: "/opt"}
+
+# volumes to mount from another container; `docker run --volumes-from` directive
+#volumesFrom:
+#  - "forwarder"
+
+# hipache integration
+hipache:
+  # the docker host which hipache resides in (the server file must exist in $BIFROST_SERVERS path)
+  host: "docker2.presentapp.co"
+  # the name of the hipache container (or specifically, the container which contains the redis)
+  container: "router"
+  # the domain to map (mak sure to set this domain to point to the docker host containing the hipache)
+  frontend: "app-server-dev.presentapp.co"
+  # the app's ip to map (if you are running a web server at port 80 inside the container, set 80/tcp here)
+  port: "80/tcp"

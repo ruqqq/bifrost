@@ -1,25 +1,43 @@
 {
   "name": "bifrost",
-  "version": "1.0.0",
-  "description": "bifrost is a deployment helper tool via SSH. Configure servers in ./servers/. Use server.sample.coffee as sample. Actions are defined as strategies.",
-  "private": true,
-  "main": "./app.coffee",
+  "version": "0.2.0",
+  "description": "bifrost is a deployment tool to be used in a simple Docker setup.",
+  "main": "app.coffee",
+  "bin": {
+    "b": "./b",
+    "bifrost": "./bifrost"
+  },
+  "preferGlobal": true,
   "dependencies": {
-    "bunyan": "*",
-    "colors": "*",
-    "ssh2": "*"
+    "colors": "^0.6.2",
+    "fstream": "^1.0.1",
+    "bunyan": "^0.22.1",
+    "rsyncwrapper": "^0.4.1",
+    "q": "^1.0.1",
+    "ssh2": "^0.3.4",
+    "yamljs": "^0.1.5"
   },
   "devDependencies": {
-    "coffee-script": "~1.7.1"
+    "coffee-script": "^1.7.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruqqq/bifrost"
+    "url": "https://github.com/ruqqq/bifrost.git"
   },
+  "keywords": [
+    "docker",
+    "deployment",
+    "devops",
+    "automator",
+    "script"
+  ],
   "author": "Faruq Rasid <me@ruqqq.sg>",
-  "license": "none",
+  "license": "GPL",
+  "bugs": {
+    "url": "https://github.com/ruqqq/bifrost/issues"
+  },
   "homepage": "https://github.com/ruqqq/bifrost"
 }
