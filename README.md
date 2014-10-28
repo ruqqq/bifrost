@@ -4,14 +4,14 @@ bifrost is a deployment tool to be used in a *simple** Docker setup. bifrost dep
 
 *(Using bifrost for large scale deployments is largely untested)*
 
-A *simplified* idea of how bifrost works by describing what happens during the command `b build`.
+A *simplified* idea of how bifrost works by describing what happens during the command `b build`:
 
 1. Copy folder which includes the `Dockerfile` to the docker host.
 2. SSH into docker host and run `docker build`
 3. `docker run` with the image which was just created
 4. The container is up now if there were no errors during deployment
 
-bifrost was built because I needed a way to deploy my Docker apps easily. Minimal setup and boilerplate. Please read through the README before attempting to use.
+bifrost was built because I needed a way to deploy my Docker apps easily with minimal setup. Please read through the README before attempting to use.
 
 ## Installation
 
@@ -33,7 +33,7 @@ Install bifrost:
 $ npm install -g bifrost-deploy
 ```
 
-bifrost comes with a helper script `b`. If the bifrost folder is in your `$PATH`, you can invoke bifrost with just `b <args>`.
+**You can now invoke bifrost with either `bifrost <args>` or simply just `b <args>`.**
 
 ### hipache Integration
 
@@ -46,11 +46,9 @@ bifrost comes with integration with hipache as a dynamic router for web apps dep
 $ docker run --restart="always" -d --name router -p 80:80 -p 443:443 -v /root/ssl:/etc/ssl ruqqq/hipache
 ```
 
-This will expose the Docker host port 80 and 443 to the hipache instance known as `router`. Now you can point domains A record to the Docker host public IP and the requests will be routed by hipache.
+This will expose the Docker host port 80 and 443 to the hipache instance known as `router`. Now you can point A records of domains to the Docker host public IP and the requests will be routed by hipache.
 
-In your app `bifrost.yml`, configure the `hipache` section accordingly. After that, any deployments will automatically configure hipache to point to the deployed app as a backend.
-
-You can deploy as many containers as you want and hipache will load balance between the backends.
+In your app `bifrost.yml`, configure the `hipache` section accordingly. Bifrost will automatically configure hipache to point to the app as a backend when issuing build/start/stop/restart commands. You can deploy as many containers as you want and hipache will load balance between the backends.
 
 **Important: Using this integration means you should start/stop/restart/build your containers with bifrost exclusively as the integration mechanism exists in those commands too.**
 
@@ -58,27 +56,47 @@ You can deploy as many containers as you want and hipache will load balance betw
 
 ## Usage
 
+### Servers YAML
+
+- Servers are configured in a YAML file - A sample is available in `servers-sample/server.sample.yml`
+- The filename should be the server hostname (i.e. `domain.com.yml`)
+- Place the file in a folder somewhere (i.e. `~/.bifrost_servers`) and set `BIFROST_SERVERS` environment variable:
+
+```
+$ export BIFROST_SERVERS=~/.bifrost_servers
+```
+
+- Alternatively, set this environment in your shell init file
+
+### Setting Environment Variables
+
+- `BIFROST_SERVERS`: Location of your servers yml files (i.e. `~/.bifrost_servers`)
+- `BIFROST_HOST`: The Docker host to target deployment at. Optionally, you can instead specify `--host domain.com` option when running commands. In this example, `$BIFROST_SERVERS/domain.com.yml` must exist.
+
 ### Single Host Deployment
 
-1. Create `Dockerfile`
-2. Define the application deployment details in `bifrost.yml`
-3. Set the folder where you store server configs and SSH keys: `$ export BIFROST_SERVERS=~/.bifrost_servers`
-4. Run `$ b build --host=yourserver.com` in the folder with the two files above
+1. Ensure your app folder has a `Dockerfile`
+2. Ensure `bifrost.yml` is configured correctly in the app folder (sample in `sample-app/bifrost.sample.yml`)
+3. Ensure your environment variables are set (see previous section)
+4. In your app folder, run `$ b build --host=domain.com`
 
-**TODO: Finish section**
+bifrost will now SSH into the server and build the docker image followed by creating and running the container. If no errors were encountered, you should have your container up an running. Every time you need to update, just run the command again and it'll rebuild the image as needed and start a new container (and delete existing ones).
 
 ### Multi Host Deployment
 
-**TODO: Finish section**
+bifrost does not support fleet deployment. You'll have to deploy to individual Docker hosts manually. (i.e. running `b build` command on the different hosts). To make your `--links` directive work properly, refer to [Docker Ambassador Pattern].
 
-Readings:
-- [Docker Ambassador Pattern]
+For hipache-based deployments, you should setup your Docker hosts in a private network. In `bifrost.yml` config, expose the ports to your Docker host private IP. hipache will then map the domains to the Docker containers on different hosts via the private IP.
 
 [Docker Ambassador Pattern]: https://docs.docker.com/articles/ambassador_pattern_linking/
 
+## Sample App
+
+**TODO: Finish Sample App **
+
 ### Available Commands
 
-You can run `b --help` in the command line for help. The commands are provided here for reference only.
+The commands are to be run in your app folder which contains `bifrost.yml`. You can also run `b --help` in the command line for help.
 
 Command | Description
 ---:| ---

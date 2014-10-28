@@ -26,8 +26,8 @@ environment:
 
 # ports to expose to docker host
 # special variables:
-#   - {PRIVATE_IFACE}: Host's Private IP Address (192.168.x.x)
-#   - {DOCKER_IFACE}: Docker Interface IP Address
+#   - {PRIVATE_IFACE}: Host's Private IP Address (192.168.x.x) (Usually used when hipache exists on a different Docker host)
+#   - {DOCKER_IFACE}: Docker Interface IP Address (Usually would suffice)
 ports:
 
    - "{DOCKER_IFACE}::80"
