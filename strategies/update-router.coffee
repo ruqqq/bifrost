@@ -33,14 +33,20 @@ class Strategy extends require("./strategy.coffee")
 
 	execute: =>
 		if @second_step
-			host = @app_server.host
-			if @app_server.host is @hipache_server.host
-				host = @docker_iface_ip
-
 			console.log "Updating hipache config...".yellow
-			Q.denodeify(@_commanche_remove_all_backends)(@app_config.hipache.container, @app_config.hipache.frontend, host)
+			console.log "...removing #{@app_server.host}:*".yellow
+			Q.denodeify(@_commanche_remove_all_backends)(@app_config.hipache.container, @app_config.hipache.frontend, @app_server.host)
+			.then =>
+				if @private_ip
+					console.log "...removing #{@private_ip}:*".yellow
+					return Q.denodeify(@_commanche_remove_all_backends)(@app_config.hipache.container, @app_config.hipache.frontend, @private_ip)
+			.then =>
+				if @app_server.host is @hipache_server.host
+					console.log "...removing #{@docker_iface_ip}:*".yellow
+					return Q.denodeify(@_commanche_remove_all_backends)(@app_config.hipache.container, @app_config.hipache.frontend, @docker_iface_ip)
 			.then =>
 				if @backends.length > 0
+					console.log "...adding #{@backends}".yellow
 					return Q.denodeify(@_commanche_add_backends)(@app_config.hipache.container, @app_config.hipache.frontend, @backends)
 			.then =>
 				console.log "...success.".green
@@ -84,6 +90,9 @@ class Strategy extends require("./strategy.coffee")
 				return Q.denodeify(@_get_docker_iface_ip)(null)
 			.then (ip) =>
 				@docker_iface_ip = ip
+				return Q.denodeify(@_get_private_ip)(null)
+			.then (ip) =>
+				@private_ip = ip
 				@_configure_hipache()
 			.fail (err) =>
 				console.error err.message.red
