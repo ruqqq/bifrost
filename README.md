@@ -30,7 +30,7 @@ Local Machine:
 Install bifrost:
 
 ```
-$ npm install -g bifrost-deploy
+$ npm install -g bifrost-docker
 ```
 
 **You can now invoke bifrost with either `bifrost <args>` or simply just `b <args>`.**
