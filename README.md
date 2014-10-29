@@ -78,7 +78,7 @@ $ export BIFROST_SERVERS=~/.bifrost_servers
 1. Ensure your app folder has a `Dockerfile`
 2. Ensure `bifrost.yml` is configured correctly in the app folder (sample in `sample-app/bifrost.sample.yml`)
 3. Ensure your environment variables are set (see previous section)
-4. In your app folder, run `$ b build --host=domain.com`
+4. In your app folder, run `$ b build --host domain.com`
 
 bifrost will now SSH into the server and build the docker image followed by creating and running the container. If no errors were encountered, you should have your container up an running. Every time you need to update, just run the command again and it'll rebuild the image as needed and start a new container (and delete existing ones).
 
