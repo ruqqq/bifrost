@@ -140,7 +140,12 @@ class Strategy extends require("./strategy.coffee")
 			process.stdout.write "...done!\n".green
 			
 			if @app_config.hipache
-				@update_router = new @bifrost.strategies["update-router"] @bifrost, @server, [@app_folder]
+				options = [@app_folder]
+				if @oldContainerIds and @oldContainerIds instanceof Array and @oldContainerIds.length > 0
+					options.push "--ignore"
+					options.push @oldContainerIds.join ","
+					
+				@update_router = new @bifrost.strategies["update-router"] @bifrost, @server, options
 				@update_router.connect()
 
 			return Q.delay 2000
@@ -175,10 +180,6 @@ class Strategy extends require("./strategy.coffee")
 						deferred.resolve()
 
 					return deferred.promise
-				.then =>
-					if @app_config.hipache
-						@update_router = new @bifrost.strategies["update-router"] @bifrost, @server, [@app_folder]
-						@update_router.connect()
 				.fail (err) =>
 					throw err
 			else if @oldImageIds.length > 0
@@ -187,10 +188,6 @@ class Strategy extends require("./strategy.coffee")
 				.then =>
 					process.stdout.write "...removed images!\n".green
 					@connection.end()
-
-					if @app_config.hipache
-						@update_router = new @bifrost.strategies["update-router"] @bifrost, @server, [@app_folder]
-						@update_router.connect()
 				.fail (err) =>
 					throw err
 			else

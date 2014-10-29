@@ -26,6 +26,12 @@ class Strategy extends require("./strategy.coffee")
 
 		@hipache_server = require(@hipache_server)
 
+		for ind,val of @argv
+			if val is "--ignore"
+				@ignore = @argv[parseInt(ind)+1].split ","
+				@argv.splice ind, 2
+				break
+
 		@opts = @argv.join " "
 
 		@second_step = false
@@ -73,6 +79,16 @@ class Strategy extends require("./strategy.coffee")
 					return Q.denodeify(@_docker_inspect)(ids.join(" "), "")
 			.then (inspect) =>
 				for ind,data of inspect
+					inIgnoreList = false
+					if @ignore and @ignore instanceof Array
+						for n,id of @ignore
+							if data.Id.indexOf(id) == 0
+								inIgnoreList = true
+								break
+
+					if inIgnoreList
+						continue
+					
 					host = @app_server.host
 					
 					for p,val of data.NetworkSettings.Ports

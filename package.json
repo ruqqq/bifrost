@@ -1,6 +1,6 @@
 {
   "name": "bifrost-docker",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "bifrost is a deployment tool to be used in a simple Docker setup.",
   "main": "app.coffee",
   "bin": {
