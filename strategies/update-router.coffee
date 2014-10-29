@@ -18,7 +18,7 @@ class Strategy extends require("./strategy.coffee")
 			console.error "Env variable BIFROST_SERVERS is empty.".red
 			process.exit 1
 
-		@hipache_server = "#{serverPath}/#{@app_config.hipache.host}.coffee"
+		@hipache_server = "#{serverPath}/#{@app_config.hipache.host}.yml"
 
 		if !fs.existsSync(@hipache_server)
 			console.error "Server #{@app_config.hipache.host} not found.".red
