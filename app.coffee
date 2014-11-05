@@ -79,7 +79,9 @@ class App
 		@strategy.connect()
 
 	bifrost_info: =>
-		console.info "bifrost v0.2.4: The Docker \"Catapult\"".bold.blue
+		pkg = require "./package.json"
+
+		console.info "bifrost v#{pkg.version}: The Docker \"Catapult\"".bold.blue
 		console.info "(c)2014 Faruq Rasid <me@ruqqq.sg>\n".italic.white
 		console.info "Run the command in the directory which contains bifrost.yml:".italic.white
 		console.info "bifrost <strategy> [--host BIFROST_HOST] [args...]".green
@@ -97,7 +99,7 @@ class App
 		_servers = fs.readdirSync serverPath
 		for file in _servers
 			if file.indexOf(".yml") > -1
-				console.info "   - #{file.split(".")[0]}".cyan
+				console.info "   - #{file.replace('.yml', '')}".cyan
 
 		console.info ""
 
