@@ -79,7 +79,7 @@ class App
 		@strategy.connect()
 
 	bifrost_info: =>
-		console.info "bifrost v0.2.3: The Docker \"Catapult\"".bold.blue
+		console.info "bifrost v0.2.4: The Docker \"Catapult\"".bold.blue
 		console.info "(c)2014 Faruq Rasid <me@ruqqq.sg>\n".italic.white
 		console.info "Run the command in the directory which contains bifrost.yml:".italic.white
 		console.info "bifrost <strategy> [--host BIFROST_HOST] [args...]".green

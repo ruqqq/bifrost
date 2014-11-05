@@ -91,7 +91,12 @@ class Strategy
 			stream.on "close", () =>
 				console.log "[exec:close]".cyan
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				console.log "[exec:exit] #{code} - #{signal}".cyan
 				@connection.end()
 
@@ -110,7 +115,12 @@ class Strategy
 			stream.on "close", () =>
 				console.log "[shell:close]".cyan
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				console.log "[shell:exit] #{code} - #{signal}".cyan
 
 			process.stdin.on 'readable', (chunk) =>
@@ -120,8 +130,6 @@ class Strategy
 
 	# opt_callback(stderr, stdout)
 	_attachDefaultCallbackToStream: (stream, output, opt_callback) =>
-		@stream = stream
-
 		output.stdout = ""
 		output.stderr = ""
 
@@ -141,7 +149,6 @@ class Strategy
 		#	console.log "[exec:close]"
 
 		stream.on "exit", (code, signal) =>
-			@stream = null
 			#console.log "[exec:exit] #{code} - #{signal}"
 
 		# callback(err)
@@ -155,7 +162,12 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, null
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				if code is 0
 					if callback then return callback()
 				else
@@ -170,7 +182,12 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, null
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				if code is 0
 					if callback then return callback()
 				else
@@ -189,7 +206,12 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, null
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				if code is 0
 					if callback then return callback()
 				else
@@ -204,7 +226,12 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, null
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				if code is 0
 					if callback then return callback()
 				else
@@ -219,7 +246,12 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, null
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				if code is 0
 					ids = output.stdout.split("\n")
 					ids.splice ids.length-1, 1
@@ -236,7 +268,12 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, null
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				if code is 0
 					tags = output.stdout.split("\n")
 					tags.splice ids.length-1, 1
@@ -253,7 +290,12 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, null
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				if code is 0
 					ids = output.stdout.split("\n")
 					ids.splice ids.length-1, 1
@@ -270,7 +312,12 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, opt_callback
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				if code is 0
 					if callback then return callback()
 				else
@@ -326,7 +373,10 @@ class Strategy
 			for ind,port of config.ports
 				opt.push "-p"
 				port = port.replace "{DOCKER_IFACE}", ips.docker
-				port = port.replace "{PRIVATE_IFACE}", ips.private
+				if port.indexOf("{PRIVATE_IFACE}") > -1 and !ips.private
+					throw new Error("Error: bifrost.yml specified {PRIVATE_IFACE} but docker host has no private interface.")
+				if ips.private
+					port = port.replace "{PRIVATE_IFACE}", ips.private
 				opt.push port
 
 		if config.links and config.links instanceof Array
@@ -353,7 +403,12 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, null
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				if code is 0
 					if callback then return callback null, output.stdout.trim()
 				else
@@ -368,7 +423,12 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, null
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				if code is 0
 					inspect = {}
 					try
@@ -389,7 +449,12 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, opt_callback
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				if code is 0
 					if callback then return callback()
 				else
@@ -404,7 +469,12 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, null
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				if code is 0
 					if callback then return callback()
 				else
@@ -419,7 +489,12 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, null
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				if code is 0
 					if callback then return callback()
 				else
@@ -434,7 +509,12 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, null
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				if code is 0
 					if callback then return callback()
 				else
@@ -449,7 +529,12 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, null
 
-			stream.on "exit", (code, signal) =>
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
 				if code is 0
 					if callback then return callback()
 				else
@@ -466,9 +551,16 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, null
 
-			stream.on "exit", (code, signal) =>
-				if code is 0 and output.stdout
-					if callback then return callback null, output.stdout.replace("\n", "").trim()
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
+				if code is 0
+					if output.stdout
+						output.stdout = output.stdout.replace("\n", "").trim()
+					if callback then return callback null, output.stdout
 				else
 					if callback then return callback new Error util.inspect({code: code, signal: signal, stderr: output.stderr})
 
@@ -483,9 +575,16 @@ class Strategy
 			output = {}
 			@_attachDefaultCallbackToStream stream, output, null
 
-			stream.on "exit", (code, signal) =>
-				if code is 0 and output.stdout
-					if callback then return callback null, output.stdout.replace("\n", "").trim()
+			code = null
+			signal = null
+			stream.on "exit", (c, s) =>
+				code = c
+				signal = s
+			stream.on "close", =>
+				if code is 0
+					if output.stdout
+						output.stdout = output.stdout.replace("\n", "").trim()
+					if callback then return callback null, output.stdout
 				else
 					if callback then return callback new Error util.inspect({code: code, signal: signal, stderr: output.stderr})
 

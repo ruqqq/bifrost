@@ -58,7 +58,10 @@ class Strategy extends require("./strategy.coffee")
 				console.log "...success.".green
 				@connection.end()
 			.fail (err) =>
-				console.error err.message.red
+				if err.message
+					console.error err.message.red
+				else if err
+					console.error "#{err}".red
 				return @connection.end()
 		else
 			console.log "Retrieving app info...".yellow
@@ -105,10 +108,14 @@ class Strategy extends require("./strategy.coffee")
 				process.stdout.write "getting docker ip...\n".yellow
 				return Q.denodeify(@_get_docker_iface_ip)(null)
 			.then (ip) =>
+				if !ip
+					throw new Error("Empty docker0 iface ip")
+
 				@docker_iface_ip = ip
 				return Q.denodeify(@_get_private_ip)(null)
 			.then (ip) =>
-				@private_ip = ip
+				if ip
+					@private_ip = ip
 				@_configure_hipache()
 			.fail (err) =>
 				console.error err.message.red

@@ -107,12 +107,18 @@ class Strategy extends require("./strategy.coffee")
 			process.stdout.write "getting docker ip...\n".yellow
 			return Q.denodeify(@_get_docker_iface_ip)(null)
 		.then (ip) =>
+			if !ip
+				throw new Error("Empty docker0 iface ip")
+
 			@docker_iface_ip = ip
 			process.stdout.write "...#{ip}\n".green
 			process.stdout.write "getting private ip...\n".yellow
 			return Q.denodeify(@_get_private_ip)(null)
 		.then (ip) =>
-			process.stdout.write "...#{ip}\n".green
+			if ip
+				process.stdout.write "...#{ip}\n".green
+			else
+				process.stdout.write "...no private ip.\n".yellow
 
 			deferred = Q.defer()
 
